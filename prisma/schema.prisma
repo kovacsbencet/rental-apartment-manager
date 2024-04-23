@@ -1,30 +1,108 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Property {
-  id        Int      @id @default(autoincrement())
-  city      String   @default("Wien")
-  district  String
-  street    String
-  number    Int
-  stairwell Int
-  floor     Int
-  apartment Int
-  status    Status
-  rent      Int
-  rentStart DateTime @default(now())
-  rentEnd   DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+generator client {
+  provider = "prisma-client-js"
 }
 
-enum Status {
+model Property {
+  id          Int            @id @default(autoincrement())
+  owner       Owner?         @relation(fields: [ownerID], references: [id])
+  ownerID     Int?
+  agent       Agent?         @relation(fields: [agentID], references: [id])
+  agentID     Int?
+  tenant      Tenant?        @relation(fields: [tenantID], references: [id])
+  tenantID    Int?
+  issues      Issue[]
+  districtID  Int
+  city        String
+  streetName  String
+  houseNumber String
+  stairwell   String
+  floor       String
+  apartment   String
+  status      PropertyStatus
+  rentPrice   Decimal?
+  rentStart   DateTime?
+  rentEnd     DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+enum PropertyStatus {
   RENTED
   NOT_RENTED
+}
+
+model Owner {
+  id         Int        @id @default(autoincrement())
+  name       String
+  phone      String
+  email      String
+  properties Property[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Agent {
+  id         Int        @id @default(autoincrement())
+  name       String
+  phone      String
+  email      String
+  properties Property[]
+  issues     Issue[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Tenant {
+  id        Int        @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String
+  property  Property[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Issue {
+  id          Int         @id @default(autoincrement())
+  description String
+  agent       Agent?      @relation(fields: [agentID], references: [id])
+  agentID     Int?
+  property    Property    @relation(fields: [propertyID], references: [id])
+  propertyID  Int
+  comments    Comment[]
+  status      IssueStatus
+  type        IssueType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum IssueStatus {
+  NEW
+  IN_PROGRESS
+  WAITING_FOR_INFO
+  NEEDS_COLLABORATION
+  RESOLVED
+  CLOSED
+}
+
+enum IssueType {
+  CONTACT_OWNER
+  CONTACT_TENANT
+  RENOVATION_WORK
+  LATE_PAYMENT
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  issue     Issue    @relation(fields: [issueID], references: [id])
+  issueID   Int
+  agentID   Int
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

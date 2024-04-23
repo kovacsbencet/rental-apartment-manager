@@ -1,0 +1,27 @@
+const districts = [
+    { value: '1010', label: '01. Innere Stadt'},
+    { value: '1020', label: '02. Leopoldstadt'},
+    { value: '1030', label: '03. Landstrasse'},
+    { value: '1040', label: '04. Wieden'},
+    { value: '1050', label: '05. Margareten'},
+    { value: '1060', label: '06. Mariahilf'},
+    { value: '1070', label: '07. Neubau'},
+    { value: '1080', label: '08. Josefstadt'},
+    { value: '1090', label: '09. Alsergrund'},
+    { value: '1100', label: '10. Favoriten'},
+    { value: '1110', label: '11. Simmering'},
+    { value: '1120', label: '12. Meidling'},
+    { value: '1130', label: '13. Hietzing'},
+    { value: '1140', label: '14. Penzing'},
+    { value: '1150', label: '15. Rudolfsheim-Fünfhaus'},
+    { value: '1160', label: '16. Ottakring'},
+    { value: '1170', label: '17. Hernals'},
+    { value: '1180', label: '18. Währing'},
+    { value: '1190', label: '19. Döbling'},
+    { value: '1200', label: '20. Brigittenau'},
+    { value: '1210', label: '21. Floridsdorf'},
+    { value: '1220', label: '22. Donaustadt'},
+    { value: '1230', label: '23. Liesing'},
+]
+
+export default districts;

@@ -1,0 +1,102 @@
+-- CreateTable
+CREATE TABLE `Property` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `ownerID` INTEGER NULL,
+    `agentID` INTEGER NULL,
+    `tenantID` INTEGER NOT NULL,
+    `districtID` INTEGER NOT NULL,
+    `city` VARCHAR(191) NOT NULL,
+    `streetName` VARCHAR(191) NOT NULL,
+    `houseNumber` VARCHAR(191) NOT NULL,
+    `stairwell` VARCHAR(191) NOT NULL,
+    `floor` VARCHAR(191) NOT NULL,
+    `apartment` VARCHAR(191) NOT NULL,
+    `status` ENUM('RENTED', 'NOT_RENTED') NOT NULL,
+    `rentPrice` DECIMAL(65, 30) NULL,
+    `rentStart` DATETIME(3) NULL,
+    `rentEnd` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Owner` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Agent` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Tenant` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Issue` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(191) NOT NULL,
+    `agentID` INTEGER NULL,
+    `propertyID` INTEGER NOT NULL,
+    `status` ENUM('NEW', 'IN_PROGRESS', 'WAITING_FOR_INFO', 'NEEDS_COLLABORATION', 'RESOLVED', 'CLOSED') NOT NULL,
+    `type` ENUM('CONTACT_OWNER', 'CONTACT_TENANT', 'RENOVATION_WORK', 'LATE_PAYMENT') NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Comment` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `issueID` INTEGER NOT NULL,
+    `agentID` INTEGER NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Property` ADD CONSTRAINT `Property_ownerID_fkey` FOREIGN KEY (`ownerID`) REFERENCES `Owner`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Property` ADD CONSTRAINT `Property_agentID_fkey` FOREIGN KEY (`agentID`) REFERENCES `Agent`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Property` ADD CONSTRAINT `Property_tenantID_fkey` FOREIGN KEY (`tenantID`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Issue` ADD CONSTRAINT `Issue_agentID_fkey` FOREIGN KEY (`agentID`) REFERENCES `Agent`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Issue` ADD CONSTRAINT `Issue_propertyID_fkey` FOREIGN KEY (`propertyID`) REFERENCES `Property`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Comment` ADD CONSTRAINT `Comment_issueID_fkey` FOREIGN KEY (`issueID`) REFERENCES `Issue`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

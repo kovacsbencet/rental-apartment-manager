@@ -4,8 +4,8 @@ import { Button } from '@radix-ui/themes';
 
 const links = 
 [
-  {route: '/properties', label: 'Properties'},
-  {route: '/issues', label: 'Issues'},
+  {route: '/properties', label: 'Ingatlanok'},
+  {route: '/issues', label: 'Teendők'},
 ]
 
 const Navigation = () => {
@@ -16,12 +16,13 @@ const Navigation = () => {
           <Link 
             key={link.route} 
             href={link.route}
+            className='text-base'
           >
             {link.label}
           </Link>
         )}
       </ul>
-      <Button size='2'>Új ingatlan hozzáadása</Button>
+      <Button size='3' className='text-lg'>Új ingatlan hozzáadása</Button>
     </nav>
   )
 }

@@ -1,13 +1,16 @@
 import prisma from '@/prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { propertySchema } from '../../validationSchemas/propertySchema';
 
 // DESCRIPTION:   GET A PROPERTY BY ID
 // ROUTE:         GET /api/properties/:id
 // ACCESS:        PRIVATE
+// INFORMATION:   INLCUDE ISSUES MODEL AS WELL
  
-export async function GET(request: NextRequest, { params }:{ params: { id: string }}) {
-  const property = await prisma.property.findUnique({ where: {id: parseInt(params.id)}})
+export async function GET(request: NextRequest, { params } : { params: { id: string }}) {
+  const property = await prisma.property.findUnique({ 
+    where: { id: parseInt(params.id) }, 
+    include: { issues: { include: { comments: true }}}
+  })
   return NextResponse.json({ success: true, property });
 }
 
@@ -16,12 +19,8 @@ export async function GET(request: NextRequest, { params }:{ params: { id: strin
 // ROUTE:         PATCH /api/properties
 // ACCESS:        PRIVATE
 
-
-export async function PATCH(request: NextRequest, { params }:{ params: {id: string}}) {
+export async function PATCH(request: NextRequest, { params } : { params: { id: string }}) {
   const body = await request.json();
-/*   const validation = propertySchema.safeParse(body);
-  if (!validation.success)
-  return NextResponse.json(validation.error.format(), { status: 400 }) */
 
   const property = await prisma.property.findUnique({
     where: { id: parseInt(params.id)}
@@ -33,17 +32,31 @@ export async function PATCH(request: NextRequest, { params }:{ params: {id: stri
   const updatedProperty = await prisma.property.update({
     where: { id: property.id},
     data: {
-        city: body.city,
-        district: body.district,
-        street: body.street,
-        number: body.number,
-        stairwell: body.stairwell,
-        floor: body.floor,
-        apartment: body.apartment,
-        status: body.status,
-        rent: body.rent
-      }
+      city: body.city,
+      districtID: body.districtID,
+      streetName: body.streetName,
+      houseNumber: body.houseNumber,
+      stairwell: body.stairwell,
+      floor: body.floor,
+      apartment: body.apartment,
+      status: body.status,
+      rentPrice: body.rentPrice,
+      rentStart: body.rentStart,
+      rentEnd: body.rentEnd,
+    }
   })
   return NextResponse.json({success: true, updatedProperty});
+}
+
+
+// DESCRIPTION:   DELETE A PROPERTY
+// ROUTE:         DELETE /api/properties/:id
+// ACCESS:        PRIVATE
+
+export async function DELETE(request: NextRequest, { params } : { params: { id: string }}) {
+  const property = await prisma.property.delete({
+    where: { id: parseInt(params.id)}
+  });
+  return NextResponse.json({ success: true });
 }
 
